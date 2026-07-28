@@ -25,7 +25,6 @@
 #include <QUrl>
 #include <QRegularExpression>
 
-// --- АНИМИРОВАННЫЙ ТУМБЛЕР ---
 class MakuToggle : public QWidget {
     Q_OBJECT
     Q_PROPERTY(int sliderPos READ sliderPos WRITE setSliderPos)
@@ -70,7 +69,6 @@ protected:
     }
 };
 
-// --- ГЛАВНОЕ ОКНО ---
 class MakuTweaker : public QMainWindow {
     Q_OBJECT
 private:
@@ -110,7 +108,6 @@ public:
         mainLayout->setSpacing(0);
         setCentralWidget(central);
 
-        // ================= САЙДБАР =================
         QWidget *sidebar = new QWidget(this);
         sidebar->setFixedWidth(300);
         QVBoxLayout *sidebarLayout = new QVBoxLayout(sidebar);
@@ -131,7 +128,6 @@ public:
         catList->addItems(tabs);
         sidebarLayout->addWidget(catList, 1);
 
-        // ================= КОНТЕНТ =================
         pagesWidget = new QStackedWidget(this);
         connect(catList, &QListWidget::currentRowChanged, this, &MakuTweaker::changePageAnimated);
 
@@ -150,9 +146,8 @@ public:
         pagesWidget->addWidget(createProcessesPage());
         pagesWidget->addWidget(createPCInfoPage());
         
-        catList->setCurrentRow(5); // Открываем "Установка ПО" для проверки
+        catList->setCurrentRow(5);
 
-        // ================= ФУТЕР =================
         QWidget *footer = new QWidget(this);
         footer->setStyleSheet("border-top: 1px solid #1E122B; background-color: #08000F;");
         QHBoxLayout *footerLayout = new QHBoxLayout(footer);
@@ -239,10 +234,7 @@ private:
         return defaultCmd.isEmpty() ? archCmd : defaultCmd;
     }
 
-    // --- ОБНОВЛЕННЫЙ ДВИЖОК ДЛЯ AUR + FLATPAK ---
     QString getUniversalInstallCmd(const QString &flatpakId, const QString &aurPkg, const QString &aptPkg, const QString &dnfPkg) {
-        // В Arch мы сбрасываем права root для yay/paru, так как они не могут работать от имени суперпользователя. 
-        // Если их нет, или они завершатся с ошибкой, установится версия из flatpak (она ставится от root)
         QString arch = "sudo -u $SUDO_USER yay -S --noconfirm " + aurPkg + " || sudo -u $SUDO_USER paru -S --noconfirm " + aurPkg + " || flatpak install -y flathub " + flatpakId;
         QString deb = "apt-get install -y " + aptPkg + " || flatpak install -y flathub " + flatpakId;
         QString fed = "dnf install -y " + dnfPkg + " || flatpak install -y flathub " + flatpakId;
@@ -350,7 +342,6 @@ private:
         return w;
     }
 
-    // ================= РЕАЛИЗАЦИЯ ВСЕХ ВКЛАДОК =================
 
     QWidget* createDesktopPage() {
         return createPageWrap("Проводник и Рабочий стол", {
@@ -396,7 +387,6 @@ private:
         QLabel *lbl = new QLabel("Механизм <b>«МАКС КАЧАЛО 100%»</b>: автоматический выбор источника установки.<br>Сначала идет поиск в родных пакетах и AUR (через yay/paru), при неудаче — Flatpak.");
         lbl->setStyleSheet("font-size: 13px; color: #A397B8; margin-bottom: 5px;");
 
-        // Правильные названия AUR пакетов
         return createPageWrap("Установка ПО и Браузеров", {
             lbl,
             createActionRow("0. Установить Flatpak (Ядро для 100% установки)", "Установить", cmdFor("pacman -S --noconfirm flatpak", "apt install -y flatpak", "dnf install -y flatpak")),
@@ -460,8 +450,7 @@ private:
         secretBtn->setCursor(Qt::PointingHandCursor);
         connect(secretBtn, &QPushButton::clicked, this, [this](){
             QLabel *spamLabel = new QLabel(this);
-            // ПАСХАЛКА: можешь стереть звездочки перед компиляцией!
-            QString spamText = "МАРК АДДЕРЛИ П**** ";
+            QString spamText = "МАРК АДДЕРЛИ ПИДОР ";
             QString fullText;
             for(int i=0; i<800; ++i) fullText += spamText;
             spamLabel->setText(fullText);
